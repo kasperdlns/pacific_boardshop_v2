@@ -4,6 +4,7 @@
         private $lastname;
         private $email;
         private $username;
+        private $password;
 
         public function setFirstname($firstname) {
             if(empty($firstname)) {
@@ -79,21 +80,46 @@
                 return $this;
         }
 
+        /**
+         * Get the value of password
+         */ 
+        public function getPassword()
+        {
+                return $this->password;
+        }
+
+        /**
+         * Set the value of password
+         *
+         * @return  self
+         */ 
+        public function setPassword($password)
+        {
+                $options = [
+                    'cost' => 14,
+                ];
+                $this->password = password_hash($password, PASSWORD_DEFAULT, $options);
+
+                return $this;
+        }
+
         public function save() {
             //connect to the database
             $conn = new PDO("mysql:host=localhost;dbname=pacific_boardshop", "root", "");
 
             //insert query
-            $statement = $conn->prepare("INSERT INTO users (firstname, lastname, email, username) VALUES (:firstname, :lastname, :email, :username)");
+            $statement = $conn->prepare("INSERT INTO users (firstname, lastname, email, username, password) VALUES (:firstname, :lastname, :email, :username, :password)");
             $firstname = $this->getFirstname();
             $lastname = $this->getLastname();
             $email = $this->getEmail();
             $username = $this->getUsername();
+            $password = $this->getPassword();
 
             $statement->bindValue(":firstname", $firstname);
             $statement->bindValue(":lastname", $lastname);
             $statement->bindValue(":email", $email);
             $statement->bindValue(":username", $username);
+            $statement->bindValue(":password", $password);
 
             //return true or false
             $result = $statement->execute();
@@ -101,4 +127,6 @@
 
         }
 
+
+        
 }
