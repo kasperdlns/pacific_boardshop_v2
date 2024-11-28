@@ -1,4 +1,7 @@
 <?php 
+
+include_once(__dir__ . "/Db.php");
+
     class User {
         private $firstname;
         private $lastname;
@@ -105,7 +108,7 @@
 
         public function save() {
             //connect to the database
-            $conn = new PDO("mysql:host=localhost;dbname=pacific_boardshop", "root", "");
+            $conn = Db::getConnection();
 
             //insert query
             $statement = $conn->prepare("INSERT INTO users (firstname, lastname, email, username, password) VALUES (:firstname, :lastname, :email, :username, :password)");
@@ -127,6 +130,4 @@
 
         }
 
-
-        
 }

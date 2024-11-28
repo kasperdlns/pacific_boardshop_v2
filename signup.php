@@ -14,6 +14,12 @@ if (!empty($_POST)) {
 
         $user->save();
         $success = "User saved";
+
+        if ($success) {
+            session_start();
+            header("location: index.php");
+        }
+
     } catch (\Throwable $th) {
         $error = $th->getMessage();
     }
