@@ -127,7 +127,31 @@ include_once(__dir__ . "/Db.php");
             //return true or false
             $result = $statement->execute();
             return $result;
-
         }
 
+        public function login() {
+                //connect to the database
+                $conn = Db::getConnection();
+            
+                //select query
+                $statement = $conn->prepare("SELECT * FROM users WHERE username = :username");
+                $username = $this->getUsername();
+                $statement->bindValue(":username", $username);
+            
+                //execute query
+                $statement->execute();
+                $user = $statement->fetch(PDO::FETCH_ASSOC);
+            
+                if ($user) {
+                    // Gebruik $_POST['password'] (plain text) voor password_verify
+                    if (password_verify($_POST['password'], $user['password'])) {
+                        return true;
+                    } else {
+                        throw new Exception("Password is incorrect");
+                    }
+                } else {
+                    throw new Exception("User not found");
+                }
+            }
+            
 }

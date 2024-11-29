@@ -1,12 +1,30 @@
 <?php 
     require "classes/User.php";
 
-    //login
     
+    $error = false;
+    $success = false;
 
+    if (!empty($_POST)) {
+        try {
+            $user = new User();
+            $user->setUsername($_POST['username']);
+            $user->setPassword($_POST['password']);
+            $user->login();
 
+            $success = "User logged in";
 
-?>
+            if ($success) {
+                session_start();
+                header("location: index.php");
+            }
+
+        } catch (\Throwable $th) {
+            $error = $th->getMessage();
+        }
+    }
+?> 
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +35,11 @@
 </head>
 <body>
 <form action="" method="post">
+    
+    <?php if($error): ?>
+        <div><?php echo $error; ?></div>
+    <?php endif; ?>
+
         <div>
             <label for="username">username</label>
             <input type="username" placeholder="username" name="username" id="username">
