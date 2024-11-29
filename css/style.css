@@ -1,0 +1,92 @@
+/* Algemene body styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Stijl voor kopteksten */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+/* Paragraaf tekst */
+p {
+    line-height: 1.6;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Stijl voor links */
+a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Stijl voor knoppen */
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Stijl voor lijsten */
+ul, ol {
+    margin: 20px 0;
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+/* Algemene opmaak voor de container */
+div {
+    margin: 20px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Afbeeldingen responsief maken */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Tabellen opmaken */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
