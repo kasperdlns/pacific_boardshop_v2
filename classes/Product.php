@@ -129,39 +129,44 @@
                 return $this;
         }
 
-        public static function getAllProducts($db) {
-            $query = "SELECT * FROM products";
-            $statement = $db->prepare($query);
-            $statement->execute();
+        // Haal alle producten op
+        // Haal alle producten op
+public static function getAllProducts(PDO $db): array {
+        $query = "SELECT * FROM products";
+        $statement = $db->prepare($query);
+        $statement->execute();
+        
+        $results = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $products = [];
+        
+        foreach ($results as $result) {
+            $product = new Product();
+            $product->setId($result['id']);
+            $product->setName($result['name']);
+            $product->setDescription($result['description']);
+            $product->setPrice($result['price']);
+            $product->setCategory($result['category']);
+            $product->setUrl($result['url']);
             
-            $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-            $products = [];
-            
-            foreach ($results as $result) {
-                $product = new Product();
-                $product->setId($result['id']);
-                $product->setName($result['name']);
-                $product->setDescription($result['description']);
-                $product->setPrice($result['price']);
-                $product->setCategory($result['category']);
-                $product->setUrl($result['url']);
-                
-                $products[] = $product;
-            }
-            
-            return $products;
+            $products[] = $product;
         }
+        
+        return $products;
+    }
+    
 
+        // filter op categorie
         public static function getProductsByCategory($conn, $category) {
                 $statement = $conn->prepare("SELECT * FROM products WHERE category = :category");
                 $statement->bindValue(':category', $category);
                 $statement->execute();
                 $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        
+            
                 // Maak een array van Product-objecten
                 $products = [];
                 foreach ($result as $row) {
                     $product = new Product();
+                    $product->setId($row['id']);
                     $product->setName($row['name']);
                     $product->setDescription($row['description']);
                     $product->setCategory($row['category']);
@@ -169,8 +174,9 @@
                     $product->setUrl($row['url']);
                     $products[] = $product;
                 }
-        
+            
                 return $products;
             }
+            
     }
 ?>
