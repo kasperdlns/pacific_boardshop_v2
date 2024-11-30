@@ -15,6 +15,15 @@ $conn = Db::getConnection();
 
 // Haal alle producten op
 $products = Product::getAllProducts($conn);
+
+
+//filteren op categorie
+$selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
+if (!empty($selectedCategory)) {
+    $products = Product::getProductsByCategory($conn, $selectedCategory);
+} else {
+    $products = Product::getAllProducts($conn);
+}
 ?>
 
 <!DOCTYPE html>
@@ -30,14 +39,17 @@ $products = Product::getAllProducts($conn);
     <a href="logout.php">Logout</a>
 
     <h2>Our Products</h2>
-    <label for="cars">Kies een categorie</label>
-
-    <select id="options">
-    <option value="volvo">Snowboard</option>
-    <option value="saab">Ski</option>
-    <option value="opel">Skate & longboard</option>
-    <option value="audi">Windsurf</option>
+    <form method="GET" action="">
+    <label for="options">Kies een categorie</label>
+    <select name="category" id="options" onchange="this.form.submit()">
+        <option value="">-- Alle Categorieën --</option>
+        <option value="snowboard" <?php echo (isset($_GET['category']) && $_GET['category'] == 'snowboard') ? 'selected' : ''; ?>>Snowboard</option>
+        <option value="ski" <?php echo (isset($_GET['category']) && $_GET['category'] == 'ski') ? 'selected' : ''; ?>>Ski</option>
+        <option value="skate & longboard" <?php echo (isset($_GET['category']) && $_GET['category'] == 'skate & longboard') ? 'selected' : ''; ?>>Skate & Longboard</option>
+        <option value="windsurf" <?php echo (isset($_GET['category']) && $_GET['category'] == 'windsurf') ? 'selected' : ''; ?>>Windsurf</option>
     </select>
+</form>
+
 
     <div class="product-list">
         <?php foreach ($products as $product): ?>
@@ -46,7 +58,7 @@ $products = Product::getAllProducts($conn);
                 <p><?php echo htmlspecialchars($product->getDescription()); ?></p>
                 <p>Category: <?php echo htmlspecialchars($product->getCategory()); ?></p>
                 <p class="price" ><strong>Price: €<?php echo htmlspecialchars($product->getPrice()); ?></strong></p>
-                <a href="<?php echo htmlspecialchars($product->getUrl()); ?>">View Product</a>
+                <a href="product_details.php">View Product</a>
             </div>
         <?php endforeach; ?>
     </div>

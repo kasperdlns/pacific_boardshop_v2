@@ -151,5 +151,26 @@
             
             return $products;
         }
+
+        public static function getProductsByCategory($conn, $category) {
+                $statement = $conn->prepare("SELECT * FROM products WHERE category = :category");
+                $statement->bindValue(':category', $category);
+                $statement->execute();
+                $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        
+                // Maak een array van Product-objecten
+                $products = [];
+                foreach ($result as $row) {
+                    $product = new Product();
+                    $product->setName($row['name']);
+                    $product->setDescription($row['description']);
+                    $product->setCategory($row['category']);
+                    $product->setPrice($row['price']);
+                    $product->setUrl($row['url']);
+                    $products[] = $product;
+                }
+        
+                return $products;
+            }
     }
 ?>
