@@ -7,24 +7,39 @@ if (!isset($_SESSION["username"])) {
     exit;
 }
 
+// Classes inladen
 require_once "classes/Db.php";
 require_once "classes/Product.php";
+require_once "classes/User.php";
+
+// Maak een database connectie
 $conn = Db::getConnection();
+
+// Haal de ingelogde gebruiker op
+$username = $_SESSION["username"];
+$user = new User();
+$user->setUsername($username);
+
+// Check of de gebruiker admin is
+$isAdmin = false;
+try {
+    $isAdmin = $user->isAdmin();
+} catch (Exception $e) {
+    echo "Fout bij het ophalen van de gebruikersstatus: " . $e->getMessage();
+}
 
 // Haal alle producten op
 $products = Product::getAllProducts($conn);
 
-
-//filteren op categorie
+// Filteren op categorie
 $selectedCategory = isset($_GET['category']) ? $_GET['category'] : '';
 if (!empty($selectedCategory)) {
     $products = Product::getProductsByCategory($conn, $selectedCategory);
 } else {
     $products = Product::getAllProducts($conn);
 }
-
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,6 +51,13 @@ if (!empty($selectedCategory)) {
 </head>
 <body>
     <h1>Welcome to the home page <?php echo htmlspecialchars($_SESSION["username"]); ?></h1>
+
+    <?php if ($isAdmin): ?>
+        <p style="color: green; font-weight: bold;">Jij bent admin.</p>
+    <?php else: ?>
+        <p style="color: red;">Jij bent geen admin.</p>
+    <?php endif; ?>
+
     <a href="logout.php">Logout</a>
 
     <!-- filter op categorie -->

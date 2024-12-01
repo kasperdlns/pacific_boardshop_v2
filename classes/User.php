@@ -153,5 +153,30 @@ include_once(__dir__ . "/Db.php");
                     throw new Exception("User not found");
                 }
             }
+
+            //checken of de gebruiker admin
+            public function isAdmin() {
+                //connect to the database
+                $conn = Db::getConnection();
+            
+                //select query
+                $statement = $conn->prepare("SELECT * FROM users WHERE username = :username");
+                $username = $this->getUsername();
+                $statement->bindValue(":username", $username);
+            
+                //execute query
+                $statement->execute();
+                $user = $statement->fetch(PDO::FETCH_ASSOC);
+            
+                if ($user) {
+                    if ($user['is_admin'] == 1) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    throw new Exception("User not found");
+                }
+            }
             
 }
