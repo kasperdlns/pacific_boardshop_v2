@@ -50,7 +50,7 @@ if (!empty($selectedCategory)) {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Welcome to the home page <?php echo htmlspecialchars($_SESSION["username"]); ?></h1>
+    <h1>Welcome to the home page <?php echo ($_SESSION["username"]); ?></h1>
 
     <?php if ($isAdmin): ?>
         <p style="color: green; font-weight: bold;">Jij bent admin.</p>
@@ -81,8 +81,11 @@ if (!empty($selectedCategory)) {
                 <p><?php echo ($product->getDescription()); ?></p>
                 <p>Category: <?php echo ($product->getCategory()); ?></p>
                 <p class="price" ><strong>Price: €<?php echo ($product->getPrice()); ?></strong></p>
-                <a href="product-details.php?id=<?php echo ($product->getId()); ?>">Bekijk product</a>
-
+                <a href="product-details.php?Id=<?php echo ($product->getId()); ?>">Bekijk product</a>
+                <!-- enkel zichtbaar voor admin -->
+                 <?php if ($isAdmin): ?>
+                    <a href="edit.php?Id=<?php echo ($product->getId()); ?>">Bewerk</a>
+                <?php endif; ?>
             </div>
         <?php endforeach; ?>
     </div>
