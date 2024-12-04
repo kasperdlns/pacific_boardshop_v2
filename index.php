@@ -82,6 +82,10 @@ if (!empty($selectedCategory)) {
                 <p>Category: <?php echo ($product->getCategory()); ?></p>
                 <p class="price" ><strong>Price: €<?php echo ($product->getPrice()); ?></strong></p>
                 <a href="product-details.php?Id=<?php echo ($product->getId()); ?>">Bekijk product</a>
+
+            
+</form>
+
                 <!-- enkel zichtbaar voor admin -->
                  <?php if ($isAdmin): ?>
                     <a href="edit.php?Id=<?php echo ($product->getId()); ?>">Bewerk</a>

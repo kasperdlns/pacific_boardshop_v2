@@ -29,6 +29,7 @@ if ($user->isAdmin()) {
     <title>Bewerk</title>
 </head>
 <body>
-   
+   <!-- toon alle info van product -->
+    
 </body>
 </html>
