@@ -1,6 +1,8 @@
 <?php
 class AddToCart {
     private $conn;
+    private $user_id;
+    private $product_id;
 
     public function __construct($conn) {
         $this->conn = $conn;
@@ -17,16 +19,31 @@ class AddToCart {
     }
 
     public function addProductToCart($user_id, $product_id) {
-        if ($this->productExistsInCart($user_id, $product_id)) {
-            return false;  // Product staat al in de winkelmand
+        $conn = Db::getConnection();
+
+        // Controleer of het product al in de winkelmand staat
+        $sql = "SELECT * FROM cart WHERE users_id = :user_id AND products_id = :product_id";
+        $statement = $conn->prepare($sql);
+        $statement->bindValue(':user_id', $user_id);
+        $statement->bindValue(':product_id', $product_id);
+        $statement->execute();
+
+        if ($statement->rowCount() > 0) {
+            // Product is al in de winkelmand
+            throw new Exception("Dit product staat al in je winkelmand!");
         }
 
-        $sqlInsert = "INSERT INTO cart (users_id, products_id) VALUES (:user_id, :product_id)";
-        $stmtInsert = $this->conn->prepare($sqlInsert);
-        $stmtInsert->bindValue(':user_id', $user_id);
-        $stmtInsert->bindValue(':product_id', $product_id);
+        // Voeg het product toe aan de winkelmand
+        $sql = "INSERT INTO cart (users_id, products_id) VALUES (:user_id, :product_id)";
+        $statement = $conn->prepare($sql);
+        $statement->bindValue(':user_id', $user_id);
+        $statement->bindValue(':product_id', $product_id);
 
-        return $stmtInsert->execute();
+        if ($statement->execute()) {
+            return true; // Succes
+        } else {
+            throw new Exception("Er is iets misgegaan bij het toevoegen van het product aan je winkelmand.");
+        }
     }
 
     public function removeProductFromCart($user_id, $product_id) {

@@ -19,18 +19,24 @@ $product = $statement->fetch();
 $cart = new AddToCart($conn);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['product_id'])) {
-    if (isset($_SESSION['user_id'])) {
-        $product_id = $_POST['product_id'];
-
-        if ($cart->addProductToCart($user_id, $product_id)) {
-            echo "Product succesvol toegevoegd aan je winkelmand!";
-        } else {
-            echo "Dit product staat al in je winkelmand!";
+    try {
+        if (!isset($_SESSION['user_id'])) {
+            throw new Exception("Je moet eerst inloggen om een product aan je winkelmand toe te voegen!");
         }
-    } else {
-        echo "Je moet eerst inloggen om een product aan je winkelmand toe te voegen!";
+
+        $product_id = $_POST['product_id'];
+        $user_id = $_SESSION['user_id']; // Zorg dat $user_id is gedefinieerd
+
+        if (!$cart->addProductToCart($user_id, $product_id)) {
+            throw new Exception("Dit product staat al in je winkelmand!");
+        }
+
+        echo "Product succesvol toegevoegd aan je winkelmand!";
+    } catch (Exception $e) {
+        echo $e->getMessage(); // Print de foutmelding van de exception
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -42,6 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['product_id'])) {
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
+    <?php
+    include_once("header.php");
+    ?>
 
 <h1>Product Details</h1>
 

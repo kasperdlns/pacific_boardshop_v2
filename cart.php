@@ -40,6 +40,10 @@ $products = $stmt->fetchAll();
 </head>
 <body>
 
+    <?php
+    include_once("header.php");
+    ?>
+
 <h2>Je Winkelmand</h2>
 
 <?php if (count($products) > 0): ?>

@@ -30,6 +30,8 @@ if ($user->isAdmin()) {
 </head>
 <body>
    <!-- toon alle info van product -->
-    
+   <?php
+    include_once("header.php");
+    ?>
 </body>
 </html>
