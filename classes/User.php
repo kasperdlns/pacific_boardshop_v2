@@ -3,11 +3,33 @@
 include_once(__dir__ . "/Db.php");
 
     class User {
+        private $id;
         private $firstname;
         private $lastname;
         private $email;
         private $username;
         private $password;
+
+
+    /**
+         * Get the value of id
+         */ 
+        public function getId()
+        {
+                return $this->id;
+        }
+
+        /**
+         * Set the value of id
+         *
+         * @return  self
+         */ 
+        public function setId($id)
+        {
+                $this->id = $id;
+
+                return $this;
+        }
 
         public function setFirstname($firstname) {
             if(empty($firstname)) {
@@ -130,29 +152,34 @@ include_once(__dir__ . "/Db.php");
         }
 
         public function login() {
-                //connect to the database
-                $conn = Db::getConnection();
-            
-                //select query
-                $statement = $conn->prepare("SELECT * FROM users WHERE username = :username");
-                $username = $this->getUsername();
-                $statement->bindValue(":username", $username);
-            
-                //execute query
-                $statement->execute();
-                $user = $statement->fetch(PDO::FETCH_ASSOC);
-            
-                if ($user) {
-                    // Gebruik $_POST['password'] (plain text) voor password_verify
-                    if (password_verify($_POST['password'], $user['password'])) {
-                        return true;
-                    } else {
-                        throw new Exception("Password is incorrect");
-                    }
+            // Connectie met de database
+            $conn = Db::getConnection();
+        
+            // Query om gebruiker op te halen
+            $statement = $conn->prepare("SELECT * FROM users WHERE username = :username");
+            $statement->bindValue(":username", $this->getUsername());
+        
+            // Query uitvoeren
+            $statement->execute();
+            $user = $statement->fetch(PDO::FETCH_ASSOC);
+        
+            if ($user) {
+                // Controleer wachtwoord
+                if (password_verify($_POST['password'], $user['password'])) {
+                    // Return de gebruikersgegevens als alles klopt
+                    return $user;
                 } else {
-                    throw new Exception("User not found");
+                    throw new Exception("Password is incorrect");
                 }
+            } else {
+                throw new Exception("User not found");
             }
+        }
+        
+        
+        
+        
+        
 
             //checken of de gebruiker admin
             public function isAdmin() {

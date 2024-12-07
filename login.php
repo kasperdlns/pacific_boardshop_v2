@@ -10,19 +10,27 @@ if (!empty($_POST['username']) && !empty($_POST['password'])) {
         $user = new User();
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);
-        $user->login();
+        $userData = $user->login();  // Hier verwacht je een array met gebruikersgegevens terug
 
-        // Sessievariabele instellen bij succesvolle login
-        $_SESSION["username"] = $_POST['username'];
+        // Sessievariabelen instellen bij succesvolle login
+        $_SESSION["username"] = $userData['username'];
+        $_SESSION["user_id"] = $userData['id'];  // Sla de correcte user ID op in de sessie
+
+        // Debug output om te controleren of de sessie correct wordt ingesteld
+        echo "<pre>";
+        var_dump($_SESSION);
+        echo "</pre>";
 
         // Doorsturen naar de homepagina
-        header("location: index.php");
+        header("Location: index.php");
         exit;
+
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

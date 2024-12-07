@@ -59,6 +59,7 @@ if (!empty($selectedCategory)) {
     <?php endif; ?>
 
     <a href="logout.php">Logout</a>
+    <a href="cart.php">Winkelmandje</a>
 
     <!-- filter op categorie -->
     <h2>Our Products</h2>
