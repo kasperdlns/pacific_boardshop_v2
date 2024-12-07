@@ -1,32 +1,42 @@
 <?php
-
-class Cart {
+class AddToCart {
     private $conn;
 
     public function __construct($conn) {
         $this->conn = $conn;
     }
 
-    public function addToCart($users_id, $products_id) {
-        // Controleer of het product al in de winkelmand zit
-        $sql = "SELECT * FROM cart WHERE users_id = :users_id AND products_id = :products_id";
-        $statement = $this->conn->prepare($sql);
-        $statement->bindParam(':users_id', $users_id);
-        $statement->bindParam(':products_id', $products_id);
-        $statement->execute();
+    public function productExistsInCart($user_id, $product_id) {
+        $sql = "SELECT * FROM cart WHERE users_id = :user_id AND products_id = :product_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':user_id', $user_id);
+        $stmt->bindValue(':product_id', $product_id);
+        $stmt->execute();
 
-        if ($statement->rowCount() > 0) {
-            // Het product zit al in de winkelmand
-            echo "<p>Product zit al in de winkelmand.</p>";
-        } else {
-            // Voeg het product toe aan de winkelmand
-            $sql = "INSERT INTO cart (users_id, products_id) VALUES (:users_id, :products_id)";
-            $statement = $this->conn->prepare($sql);
-            $statement->bindParam(':users_id', $users_id);
-            $statement->bindParam(':products_id', $products_id);
-            $statement->execute();
-
-            echo "<p>Product toegevoegd aan de winkelmand.</p>";
-        }
+        return $stmt->rowCount() > 0;
     }
+
+    public function addProductToCart($user_id, $product_id) {
+        if ($this->productExistsInCart($user_id, $product_id)) {
+            return false;  // Product staat al in de winkelmand
+        }
+
+        $sqlInsert = "INSERT INTO cart (users_id, products_id) VALUES (:user_id, :product_id)";
+        $stmtInsert = $this->conn->prepare($sqlInsert);
+        $stmtInsert->bindValue(':user_id', $user_id);
+        $stmtInsert->bindValue(':product_id', $product_id);
+
+        return $stmtInsert->execute();
+    }
+
+    public function removeProductFromCart($user_id, $product_id) {
+        $sqlDelete = "DELETE FROM cart WHERE users_id = :user_id AND products_id = :product_id";
+        $stmtDelete = $this->conn->prepare($sqlDelete);
+        $stmtDelete->bindValue(':user_id', $user_id);
+        $stmtDelete->bindValue(':product_id', $product_id);
+    
+        return $stmtDelete->execute();
+    }
+    
 }
+?>

@@ -1,31 +1,33 @@
 <?php
 session_start();
-include_once(__DIR__ . "/classes/Db.php");
 
-// Controleer of de gebruiker is ingelogd
-if (!isset($_SESSION['user_id'])) {
-    echo "Je moet eerst inloggen om de winkelmand te bekijken!";
-    exit;
-}
+include_once(__DIR__ . "/classes/Db.php");
+include_once(__DIR__ . "/classes/Add-to-cart.php");
 
 $conn = Db::getConnection();
 $user_id = $_SESSION['user_id'];
 
-// Haal alle producten op die aan de winkelmand van de gebruiker zijn toegevoegd
-$sql = "SELECT products.name, products.price FROM cart 
-        JOIN products ON cart.products_id = products.id 
-        WHERE cart.users_id = :user_id";
-$statement = $conn->prepare($sql);
-$statement->bindValue(':user_id', $user_id);
-$statement->execute();
+$cart = new AddToCart($conn);
 
-$products = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-// Bereken de totale prijs
-$totalPrice = 0;
-foreach ($products as $product) {
-    $totalPrice += $product['price'];
+// Product verwijderen uit de winkelmand
+if (isset($_GET['remove_id'])) {
+    $product_id = $_GET['remove_id'];
+    if ($cart->removeProductFromCart($user_id, $product_id)) {
+        echo "Product is succesvol verwijderd uit je winkelmand.";
+        header('Location: cart.php');  // Redirect naar de cart-pagina om wijzigingen te zien
+        exit;
+    } else {
+        echo "Er is een fout opgetreden bij het verwijderen van het product.";
+    }
 }
+
+// Producten ophalen uit de winkelmand voor weergave
+$sql = "SELECT p.name, p.price, c.products_id FROM cart c JOIN products p ON c.products_id = p.id WHERE c.users_id = :user_id";
+$stmt = $conn->prepare($sql);
+$stmt->bindValue(':user_id', $user_id);
+$stmt->execute();
+$products = $stmt->fetchAll();
+
 ?>
 
 <!DOCTYPE html>
@@ -38,19 +40,25 @@ foreach ($products as $product) {
 </head>
 <body>
 
-<h1>Je Winkelmand</h1>
+<h2>Je Winkelmand</h2>
 
 <?php if (count($products) > 0): ?>
-    <ul>
+    <table>
+        <tr>
+            <th>Product Naam</th>
+            <th>Prijs</th>
+            <th>Actie</th>
+        </tr>
         <?php foreach ($products as $product): ?>
-            <li>
-                Naam: <?php echo htmlspecialchars($product['name']); ?> - Prijs: €<?php echo htmlspecialchars($product['price']); ?>
-            </li>
+            <tr>
+                <td><?php echo htmlspecialchars($product['name']); ?></td>
+                <td>€<?php echo htmlspecialchars($product['price']); ?></td>
+                <td>
+                    <a href="cart.php?remove_id=<?php echo $product['products_id']; ?>">Verwijderen</a>
+                </td>
+            </tr>
         <?php endforeach; ?>
-    </ul>
-
-    <p><strong>Totale Prijs: €<?php echo number_format($totalPrice, 2); ?></strong></p>
-
+    </table>
 <?php else: ?>
     <p>Je winkelmand is leeg.</p>
 <?php endif; ?>
