@@ -1,11 +1,27 @@
 <?php
 class AddToCart {
     private $conn;
-    private $user_id;
-    private $product_id;
+    private $userId;  // Nieuwe eigenschap
+    private $productId; // Nieuwe eigenschap
 
     public function __construct($conn) {
         $this->conn = $conn;
+    }
+
+    public function getUserId() {
+        return $this->userId;
+    }
+
+    public function setUserId($id) {
+        $this->userId = $id;
+    }
+
+    public function getProductId() {
+        return $this->productId;
+    }
+
+    public function setProductId($id) {
+        $this->productId = $id;
     }
 
     public function productExistsInCart($user_id, $product_id) {
